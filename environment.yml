@@ -1,0 +1,6 @@
+name: bertsum
+dependencies:
+  - python=2.7.16
+  - jupyter
+  - pylint
+  - rope
