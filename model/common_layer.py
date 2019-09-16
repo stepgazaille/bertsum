@@ -13,7 +13,7 @@ from utils.beam_omt import Translator
 import pprint
 from tqdm import tqdm
 pp = pprint.PrettyPrinter(indent=1)
-from pytorch_pretrained_bert.tokenization import BertTokenizer
+from pytorch_transformers import BertTokenizer
 from rouge import Rouge
 
 class EncoderLayer(nn.Module):

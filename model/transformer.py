@@ -16,8 +16,8 @@ pp = pprint.PrettyPrinter(indent=1)
 import os
 import time
 
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.modeling import BertModel
+from pytorch_transformers import BertTokenizer
+from pytorch_transformers import BertModel
 
 random.seed(123)
 torch.manual_seed(123)
@@ -204,7 +204,9 @@ class Summarizer(nn.Module):
 
         with torch.no_grad():
             # encoder_outputs are hidden states from transformer
-            encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=input_mask_batch, output_all_encoded_layers=False)
+            # encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=input_mask_batch, output_all_encoded_layers=False)
+            # https://modelzoo.co/model/pytorch-pretrained-bert
+            encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=input_mask_batch)
 
         # # Draft Decoder 
         sos_token = torch.LongTensor([config.SOS_idx] * input_ids_batch.size(0)).unsqueeze(1)
@@ -273,7 +275,9 @@ class Summarizer(nn.Module):
 
                 context_input_mask_batch = torch.stack(context_input_mask_batch) #.cuda(device=0)
                     # self.embedding = self.embedding.cuda(device=0)
-                context_vector, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=context_input_mask_batch, output_all_encoded_layers=False)
+                # context_vector, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=context_input_mask_batch, output_all_encoded_layers=False)
+                # https://modelzoo.co/model/pytorch-pretrained-bert
+                context_vector, _ = self.encoder(input_ids_batch, token_type_ids=example_index_batch, attention_mask=context_input_mask_batch)
                 
                 if config.USE_CUDA: context_vector = context_vector.cuda(device=0)
             # decoder input size == encoder output size == (batch_size, 512, 768)
@@ -292,7 +296,9 @@ class Summarizer(nn.Module):
         input_ids_batch, input_mask_batch, example_index_batch, enc_batch_extend_vocab, extra_zeros, _ = get_input_from_batch(batch)
         # mask_src = enc_batch.data.eq(config.PAD_idx).unsqueeze(1)
         with torch.no_grad():
-            encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=enc_batch_extend_vocab, attention_mask=input_mask_batch, output_all_encoded_layers=False)
+            # encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=enc_batch_extend_vocab, attention_mask=input_mask_batch, output_all_encoded_layers=False)
+            # https://modelzoo.co/model/pytorch-pretrained-bert
+            encoder_outputs, _ = self.encoder(input_ids_batch, token_type_ids=enc_batch_extend_vocab, attention_mask=input_mask_batch)
 
         ys = torch.ones(1, 1).fill_(config.SOS_idx).long()
         if config.USE_CUDA: ys = ys.cuda()

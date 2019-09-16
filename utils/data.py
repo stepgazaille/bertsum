@@ -13,11 +13,11 @@ import logging
 import json
 import re
 
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.modeling import BertModel
+from pytorch_transformers import BertTokenizer
+from pytorch_transformers import BertModel
 
 import sys
-sys.path.insert(0, '/home/nayeon/naver2')
+#sys.path.insert(0, '/home/nayeon/naver2')
 
 # DailyMail 
 import glob
