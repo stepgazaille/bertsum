@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import pickle
@@ -166,8 +167,8 @@ class Dataset(data.Dataset):
         # example_index = torch.arange(input_ids.size(0), dtype=torch.long)
         # item['input_feature']={"input_ids":input_ids, "input_mask":input_mask, "example_index":example_index}
         
-        item['input_feature']=self.preprocess(self.articles[idx], is_bert=True) # BERT input features  
-        item['target_feature']=self.preprocess(self.summaries[idx], is_bert=True) # BERT target feature
+        item['input_feature']=self.preprocess(self.articles[idx], seq_length=config.max_seq_length, is_bert=True) # BERT input features  
+        item['target_feature']=self.preprocess(self.summaries[idx], seq_length=config.max_tgt_length, is_bert=True) # BERT target feature
         # item['target_feature']=self.preprocess(self.summaries[idx], is_bert=False) # WordPiece features only
         item['target_txt']=self.summaries[idx].text_a
 

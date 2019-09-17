@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from model.transformer import Summarizer
 from model.common_layer import evaluate
 from utils import config

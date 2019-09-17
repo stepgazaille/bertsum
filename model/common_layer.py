@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ### MOSTO OF IT TAKEN FROM https://github.com/kolloldas/torchnlp
 ## MINOR CHANGES
 import torch
@@ -613,7 +614,7 @@ def evaluate(model, data, model_name='trs', ty='valid', verbose=True):
         print("\nEVAL loss: {:.4f} r_avg: [{:.2f}] r1: {:.2f} r2: {:.2f} rl: {:.2f}".format(loss, r_avg, r1, r2, rl))
         for hyp, gold in zip(hyp_g, ref):
             print("HYP: ")
-            print(hyp)
+            print(hyp.encode('utf-8'))
             print("GOLD: ")
-            print(gold)
+            print(gold.encode('utf-8'))
     return loss, r_avg

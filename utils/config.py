@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import argparse
 import os
 import torch
@@ -24,6 +25,7 @@ parser.add_argument("--max_enc_steps", type=int, default=400)
 parser.add_argument("--max_dec_steps", type=int, default=seq_len) #100
 parser.add_argument("--min_dec_steps", type=int, default=0) #35
 parser.add_argument("--beam_size", type=int, default=5)
+parser.add_argument("--train_data_path", type=str, default="/home/bertsum/data/finished_files")
 parser.add_argument("--save_path", type=str, default="save/")
 parser.add_argument("--save_path_dataset", type=str, default="save/")
 parser.add_argument("--cuda", action="store_true")
@@ -37,16 +39,21 @@ parser.add_argument("--label_smoothing", action="store_true")
 parser.add_argument("--noam", action="store_true")
 parser.add_argument("--split_copy_head", action="store_true")
 parser.add_argument("--small", action="store_true", help="using smaller data. suitable for debug/testing")
+parser.add_argument("--nb_epochs", type=int, default=1, help="max number of epochs") # 4
 
 ## transformer 
-parser.add_argument("--hop", type=int, default=12) # 12
+parser.add_argument("--hop", type=int, default=12)
 parser.add_argument("--heads", type=int, default=12) 
 parser.add_argument("--depth", type=int, default=48)
 parser.add_argument("--filter", type=int, default=50)
 
 ## BERT
-parser.add_argument("--max_seq_length", default=seq_len, type=int,
+parser.add_argument("--max_seq_length", default=512, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences longer "
+                            "than this will be truncated, and sequences shorter than this will be padded.")
+
+parser.add_argument("--max_tgt_length", default=100, type=int,
+                        help="The maximum total target sequence length after WordPiece tokenization. Sequences longer "
                             "than this will be truncated, and sequences shorter than this will be padded.")
 
 arg = parser.parse_args()
@@ -60,8 +67,8 @@ emb_dim= arg.emb_dim
 batch_size= arg.batch_size
 lr=arg.lr
 
-max_enc_steps=arg.max_enc_steps
-max_dec_step= max_dec_steps=arg.max_dec_steps
+max_enc_steps = arg.max_enc_steps
+max_dec_step = max_dec_steps = arg.max_dec_steps
 
 min_dec_steps=arg.min_dec_steps 
 beam_size=arg.beam_size
@@ -79,7 +86,7 @@ use_oov_emb = arg.use_oov_emb
 cov_loss_wt = 1.0
 lr_coverage=0.15
 eps = 1e-12
-epochs = 30 #4
+epochs = arg.nb_epochs
 UNK_idx = 0
 PAD_idx = 1
 EOS_idx = 2
@@ -87,10 +94,15 @@ SOS_idx = 3
 SENTINEL = 4
 
 save_path = arg.save_path
-save_path_dataset = arg.save_path_dataset
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 test = arg.test
-if(not test):
+if(test):
+    save_path_dataset = arg.save_path_dataset
+    if not os.path.exists(save_path_dataset):
+        os.makedirs(save_path_dataset)
+else:
     save_path_dataset = save_path
 
 
@@ -104,10 +116,8 @@ label_smoothing = arg.label_smoothing
 noam = arg.noam
 
 ### BERT
-root_dir = os.path.expanduser("/home/bertsum")
-train_data_path = os.path.join(root_dir, "data/finished_files/")
+train_data_path = os.path.expanduser(arg.train_data_path)
 max_seq_length = arg.max_seq_length # initially was 128, but i changed to 512
+max_tgt_length = arg.max_tgt_length
 vocab_size = 30522
-
-
 small = arg.small

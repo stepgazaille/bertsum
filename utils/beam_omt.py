@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Manage beam search info structure.
     Heavily borrowed from OpenNMT-py.
     For code in OpenNMT-py, please check the following link:
